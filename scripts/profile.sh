@@ -14,7 +14,7 @@ sleep 10
 
 for RETRY_COUNT in {1..10}
 do
-  RESPONSE=$(curl -s http://localhost:${IDLE_PORT}/)
+  RESPONSE=$(curl -s http://localhost:${IDLE_PORT}/profile)
   UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
@@ -37,4 +37,3 @@ do
   echo "> Health check 연결 실패. 재시도..."
   sleep 10
 done
-

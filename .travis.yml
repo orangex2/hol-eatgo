@@ -37,6 +37,10 @@ deploy:
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
     bucket: hol-eatgo
+    key: eatgo.zip
+    bundle_type: zip
+    application: hot-eatgo-deploy
+    deployment_group: hol-eatgo-deploymentgroup1
     region: us-east-1
     wait-until-deployed: true
 

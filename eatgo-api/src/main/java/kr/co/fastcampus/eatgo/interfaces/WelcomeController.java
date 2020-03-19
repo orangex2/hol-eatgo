@@ -3,6 +3,8 @@ package kr.co.fastcampus.eatgo.interfaces;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 public class WelcomeController {
 /*
@@ -11,6 +13,6 @@ public class WelcomeController {
  */
     @GetMapping("/")
     public String hello() {
-        return "Hello, world!!!";
+        return "Hello, world!!!" + LocalDateTime.now().toString();
     }
 }

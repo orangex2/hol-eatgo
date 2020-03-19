@@ -24,13 +24,13 @@ after_success:
   - docker --version  # document the version travis is using
   - pip install --user awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
-  - echo $AWS_ACCESS_KEY
-  - echo $AWS_SECRET_KEY
-  - aws configure set profile.default.region us-east-1
-  - aws configure set profile.default.aws_access_key_id = $AWS_ACCESS_KEY
-  - aws configure set profile.default.aws_secret_access_key = $AWS_SECRET_KEY
-  - aws configure list
-  - eval $(aws ecr get-login --region us-east-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+#  - echo $AWS_ACCESS_KEY
+#  - echo $AWS_SECRET_KEY
+#  - aws configure set profile.default.region us-east-1
+#  - aws configure set profile.default.aws_access_key_id = $AWS_ACCESS_KEY
+#  - aws configure set profile.default.aws_secret_access_key = $AWS_SECRET_KEY
+#  - aws configure list
+  - eval $(aws ecr get-login --no-include-email --region us-east-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
   - docker build -t eatgo-api-test .
   - docker tag eatgo-api-test:latest 268114937024.dkr.ecr.us-east-1.amazonaws.com/eatgo:latest
   - docker push 268114937024.dkr.ecr.us-east-1.amazonaws.com/eatgo:latest

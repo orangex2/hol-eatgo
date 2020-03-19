@@ -20,6 +20,16 @@ script: "./gradlew clean build"
 services:
   - docker
 
+after_success:
+  - docker --version  # document the version travis is using
+  - pip install --user awscli # install aws cli w/o sudo
+  - export PATH=$PATH:$HOME/.local/bin # put aws in the path
+  - eval $(aws ecr get-login --region us-east-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+  - docker build -t eatgo-api-test .
+  - docker tag my_example_app:latest 268114937024.dkr.ecr.us-east-1.amazonaws.com/eatgo:latest
+  - docker push 268114937024.dkr.ecr.us-east-1.amazonaws.com/eatgo:latest
+
+
 #before_deploy:
 #  - mkdir -p before-deploy # zip에 포함시킬 파일들을 담을 디렉토리 생성
 #  - cp scripts/*.sh before-deploy/

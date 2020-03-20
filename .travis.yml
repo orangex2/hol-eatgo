@@ -35,6 +35,7 @@ after_success:
   - docker build -t eatgo-api-test .
   - docker tag eatgo-api-test:latest 268114937024.dkr.ecr.us-east-1.amazonaws.com/eatgo:latest
   - docker push 268114937024.dkr.ecr.us-east-1.amazonaws.com/eatgo:latest
+  - ecs-deploy -c eatgo-api-cluster -n eatgo-service -i eatgo:latest
 
 
 

@@ -16,8 +16,9 @@ public class WelcomeController {
     @GetMapping("/")
     public String hello() {
         ZonedDateTime nowSeoul = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return "ECS Now in Seoul is " + nowSeoul + "!+5";
+        return "Now in Seoul is " + nowSeoul + "-- +9";
         //return "Hello, world!!5!! " + LocalDateTime.now().toString();
     }
 }
+
 

@@ -6,7 +6,7 @@ sudo: required
 
 branches:
   only:
-    - master
+    - deploy-ec2
 
 # Travis CI 서버의 Home
 cache:

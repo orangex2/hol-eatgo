@@ -26,15 +26,15 @@ after_success:
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
   - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
   - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-  - export AWS_DEFAULT_REGION=us-east-1
-  - aws configure set profile.default.region us-east-1
+  - export AWS_DEFAULT_REGION=ap-northeast-1
+  - aws configure set profile.default.region ap-northeast-1
   - aws configure set profile.default.aws_access_key_id $AWS_ACCESS_KEY
   - aws configure set profile.default.aws_secret_access_key $AWS_SECRET_KEY
   - aws configure list
   - eval $(aws ecr get-login --no-include-email) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
   - docker build -t eatgo-api-test .
-  - docker tag eatgo-api-test:latest 268114937024.dkr.ecr.us-east-1.amazonaws.com/eatgo:latest
-  - docker push 268114937024.dkr.ecr.us-east-1.amazonaws.com/eatgo:latest
+  - docker tag eatgo-api-test:latest 268114937024.dkr.ecr.ap-northeast-1.amazonaws.com/eatgoimage:latest
+  - docker push 268114937024.dkr.ecr.ap-northeast-1.amazonaws.com/eatgoimage:latest
 
 #before_deploy:
 #  - mkdir -p before-deploy # zip에 포함시킬 파일들을 담을 디렉토리 생성

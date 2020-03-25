@@ -9,16 +9,11 @@ import java.time.ZonedDateTime;
 
 @RestController
 public class WelcomeController {
-/*
-    @RestController는 Spring MVC Controlle에 @ResponseBody가 추가된 것입니다.
-    당연하게도 RestController의 주용도는 Json/Xml 형태로 객체 데이터를 반환하는 것입니다.
- */
+
     @GetMapping("/")
     public String hello() {
         ZonedDateTime nowSeoul = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return "Now in Seoul is " + nowSeoul + "-- +9";
-        //return "Hello, world!!5!! " + LocalDateTime.now().toString();
+        return "현재 서울 시각은 " + nowSeoul + "-- +9";
     }
 }
-
 

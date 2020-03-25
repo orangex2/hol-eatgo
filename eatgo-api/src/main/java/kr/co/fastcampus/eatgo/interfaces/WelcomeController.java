@@ -15,7 +15,7 @@ public class WelcomeController {
 
         System.out.println("찍히나?");
         ZonedDateTime nowSeoul = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        return "현재 서울 시각은 " + nowSeoul + "-- +9 : code 수정";
+        return "현재 서울 시각은 " + nowSeoul + "-- +9";
     }
 }
 

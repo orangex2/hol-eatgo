@@ -33,7 +33,7 @@ after_success:
   - aws configure list
   - eval $(aws ecr get-login --no-include-email) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
   - docker build -t eatgo-api-test .
-  - docker tag eatgo-api-test:latest 268114937024.dkr.ecr.ap-northeast-1.amazonaws.com/eatgoimage:latest
+  - docker tag eatgo-api-test:latest 268114937024.dkr.ecr.ap-northeast-1.amazonaws.com/eatgoimage:1234567890
   - docker push 268114937024.dkr.ecr.ap-northeast-1.amazonaws.com/eatgoimage:1234567890
 
 #before_deploy:

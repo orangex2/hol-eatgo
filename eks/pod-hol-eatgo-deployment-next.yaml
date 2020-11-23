@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hol-eatgo-rp-deployment-next
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+      service: hol-eatgo-rp-next
+  template:
+    metadata:
+      labels:
+        type: app
+        service: hol-eatgo-rp-next
+    spec:
+      containers:
+      - name: app
+        image: leftwing871/eatgo-api-test:0.0.2
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 2 # Default 1
+          periodSeconds: 5 # Defaults 10
+          failureThreshold: 1 # Defaults 3
+

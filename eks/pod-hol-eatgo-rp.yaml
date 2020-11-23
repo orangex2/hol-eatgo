@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hol-eatgo-rp
+  labels:
+    type: app
+spec:
+  containers:
+  - name: app
+    image: leftwing871/eatgo-api-test:0.0.1
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 5
+      timeoutSeconds: 2 # Default 1
+      periodSeconds: 5 # Defaults 10
+      failureThreshold: 1 # Defaults 3

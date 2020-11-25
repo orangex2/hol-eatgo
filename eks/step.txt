@@ -1,0 +1,212 @@
+ec2-user:~/environment/hol-eatgo/eks (master) $ pwd
+/home/ec2-user/environment/hol-eatgo/eks
+
+##클러스터 생성
+eksctl create cluster -f eksworkshop.yaml
+
+##노드확인
+ec2-user:~/environment $ kubectl get nodes
+NAME                                                STATUS   ROLES    AGE     VERSION
+ip-192-168-28-240.ap-northeast-2.compute.internal   Ready    <none>   3h50m   v1.17.12-eks-7684af
+ip-192-168-57-201.ap-northeast-2.compute.internal   Ready    <none>   3h50m   v1.17.12-eks-7684af
+ip-192-168-71-176.ap-northeast-2.compute.internal   Ready    <none>   3h50m   v1.17.12-eks-7684af
+
+##Pod 생성
+kubectl apply -f pod-hol-eatgo-deployment.yaml 
+
+##Pod 확인
+kubectl get pods
+NAME                                       READY   STATUS    RESTARTS   AGE
+hol-eatgo-rp-deployment-55b6bdc7cb-7lpd5   1/1     Running   0          34m
+hol-eatgo-rp-deployment-55b6bdc7cb-8vfd7   1/1     Running   0          34m
+hol-eatgo-rp-deployment-55b6bdc7cb-mlqdb   1/1     Running   0          34m
+
+##service생성
+kubectl apply -f pod-hol-eatgo-service.yaml 
+
+##service조회
+kubectl get services hol-eatgo-rp-service
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)          AGE
+hol-eatgo-rp-service   LoadBalancer   10.100.231.115   a99e3e3ef7cff47e5a335fd6dd860bed-1576819657.ap-northeast-2.elb.amazonaws.com   8080:31412/TCP   5m47s
+
+
+Amazon EKS에서 영구 스토리지를 사용하려면 어떻게 해야 합니까?
+https://aws.amazon.com/ko/premiumsupport/knowledge-center/eks-persistent-storage/
+1. 작업자 노드가 Amazon EBS 볼륨을 생성 및 수정할 수 있도록 허용하는 권한이 있는 예제 IAM 정책을 다운로드하려면 다음 명령을 실행합니다.
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/v0.4.0/docs/example-iam-policy.json
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:AttachVolume",
+        "ec2:CreateSnapshot",
+        "ec2:CreateTags",
+        "ec2:CreateVolume",
+        "ec2:DeleteSnapshot",
+        "ec2:DeleteTags",
+        "ec2:DeleteVolume",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSnapshots",
+        "ec2:DescribeTags",
+        "ec2:DescribeVolumes",
+        "ec2:DetachVolume"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+
+2. Amazon_EBS_CSI_Driver라는 IAM 정책을 생성하려면 다음 명령을 실행합니다.
+aws iam create-policy --policy-name Amazon_EBS_CSI_Driver \--policy-document file://example-iam-policy.json
+
+3. NodeInstanceRole에 새 IAM 정책을 연결하려면 다음 명령을 실행합니다.
+
+aws iam attach-role-policy \
+--policy-arn arn:aws:iam::268114937024:policy/Amazon_EBS_CSI_Driver \
+--role-name eksctl-eksworkshop-eksctl-nodegro-NodeInstanceRole-OLRSMOULPG9M   <---- EC2 에 붙어있는 Role
+
+4. Amazon EBS CSI 드라이버를 배포하려면 다음 명령을 실행합니다.
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
+
+
+Amazon EBS CSI 드라이버 테스트:
+동적 프로비저닝을 사용하는 애플리케이션으로 Amazon EBS CSI 드라이버를 테스트할 수 있습니다. 
+Amazon EBS 볼륨은 필요한 Pod에 의해 온디맨드로 프로비저닝됩니다.
+
+1. AWS GitHub에서 aws-ebs-csi-driver 리포지토리를 복제하려면 다음 명령을 실행합니다.
+git clone https://github.com/kubernetes-sigs/aws-ebs-csi-driver.git
+
+2. 작업 디렉터리를 Amazon EBS 드라이버 테스트 파일이 포함된 폴더로 변경하려면 다음 명령을 실행합니다.
+cd aws-ebs-csi-driver/examples/kubernetes/dynamic-provisioning/
+
+3. 테스트에 필요한 Kubernetes 리소스를 생성하려면 다음 명령을 실행합니다.
+## 실행전 내용을 먼저 확인 할 것
+kubectl apply -f specs/
+
+##storageclass.yaml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ebs-sc
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+
+##
+Amazon EBS CSI(Container Storage Interface) 드라이버에서는 Amazon EKS 클러스터가 영구 볼륨을 위해 
+Amazon EBS 볼륨의 수명 주기를 관리할 수 있게 해주는 CSI 인터페이스를 제공합니다.
+##
+
+##claim.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ebs-sc
+  resources:
+    requests:
+      storage: 4Gi
+
+##
+https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/
+퍼시스턴트볼륨 (PV)은 관리자가 프로비저닝하거나 스토리지 클래스를 사용하여 동적으로 프로비저닝한 클러스터의 스토리지이다. 
+노드가 클러스터 리소스인 것처럼 PV는 클러스터 리소스이다. 
+PV는 Volumes와 같은 볼륨 플러그인이지만, PV를 사용하는 개별 파드와는 별개의 라이프사이클을 가진다. 
+이 API 오브젝트는 NFS, iSCSI 또는 클라우드 공급자별 스토리지 시스템 등 스토리지 구현에 대한 세부 정보를 담아낸다.
+
+퍼시스턴트볼륨클레임 (PVC)은 사용자의 스토리지에 대한 요청이다. 
+파드와 비슷하다. 파드는 노드 리소스를 사용하고 PVC는 PV 리소스를 사용한다. 
+파드는 특정 수준의 리소스(CPU 및 메모리)를 요청할 수 있다. 
+클레임은 특정 크기 및 접근 모드를 요청할 수 있다(예: ReadWriteOnce, ReadOnlyMany 또는 ReadWriteMany로 마운트 할 수 있음. AccessModes 참고).
+##
+
+
+##pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+spec:
+  containers:
+  - name: app
+    image: centos
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo $(date -u) >> /data/out.txt; sleep 5; done"]
+    volumeMounts:
+    - name: persistent-storage
+      mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+      claimName: ebs-claim
+
+
+참고: kubectl 명령은 StorageClass, PersistentVolumeClaim(PVC) 및 Pod를 생성합니다. Pod는 PVC를 참조합니다. Amazon EBS 볼륨은 Pod가 생성될 때만 프로비저닝됩니다.
+4. PVC를 참조하는 Pod의 결과로서 생성된 영구 볼륨을 보려면 다음 명령을 실행합니다.
+
+kubectl get persistentvolumes
+
+5. 영구 볼륨에 대한 정보를 보려면 다음 명령을 실행합니다.
+kubectl describe persistentvolumes pv_name
+고: pv_name을 이전 4단계에서 반환된 영구 볼륨의 이름으로 바꿉니다. 출력에서 Source.VolumeHandle 속성의 값은 계정에 생성된 물리적 Amazon EBS 볼륨의 ID입니다.
+
+
+6. Pod가 볼륨에 데이터를 성공적으로 쓰고 있는지 확인하려면 다음 명령을 실행합니다.
+kubectl exec -it app cat /data/out.txt
+
+----
+##MySQL 실행하기
+## We are going to create a MySQL Database with persistence storage using AWS EBS Volumes
+## https://www.stacksimplify.com/aws-eks/kubernetes-storage/create-kubernetes-storageclass-persistentvolumeclain-configmap-for-mysql-database/
+
+#01-storage-class.yml
+#skip
+
+#02-persistent-volume-claim.yml
+kubectl -f ./02-persistent-volume-claim.yml
+
+kubectl apply -f ./02-persistent-volume-claim.yml
+persistentvolumeclaim/ebs-mysql-pv-claim created
+
+
+#03-UserManagement-ConfigMap.yml
+컨피그맵(ConfigMap)
+컨피그맵은 키-값 쌍으로 기밀이 아닌 데이터를 저장하는 데 사용하는 API 오브젝트이다. 
+파드는 볼륨에서 환경 변수, 커맨드-라인 인수 또는 구성 파일로 컨피그맵을 사용할 수 있다.
+kubectl apply -f ./03-UserManagement-ConfigMap.yml 
+configmap/usermanagement-dbcreation-script created
+
+#04-mysql-deployment.yml
+kubectl apply -f ./04-mysql-deployment.yml 
+
+
+#05-mysql-clusterip-service.yml
+kubectl apply -f ./05-mysql-clusterip-service.yml 
+
+kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h mysql -pdbpassword11
+
+
+# Verify usermgmt schema got created which we provided in ConfigMap
+mysql> show schemas;
+
+
+--
+
+##persistentvolume 생성
+kubectl create -f mysql-pv.yaml
+persistentvolume/pv003 created
+
+##persistentvolume 조회
+ec2-user:~/environment/hol-eatgo/eks (master) $ kubectl get pv
+NAME    CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+pv003   5Gi        RWO            Retain           Available                                   35s
+
+kubectl 
+
+
+

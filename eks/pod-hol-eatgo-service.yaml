@@ -9,5 +9,5 @@ spec:
     protocol: TCP
   selector:
     type: app
-    service: hol-eatgo-rp-next
+    service: hol-eatgo-rp
 

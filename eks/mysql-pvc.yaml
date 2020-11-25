@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+ accessModes:
+   - ReadWriteOnce
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+ resources:
+   requests:
+     storage: 1Gi    
+ 

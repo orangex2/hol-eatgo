@@ -66,7 +66,7 @@ aws iam create-policy --policy-name Amazon_EBS_CSI_Driver \--policy-document fil
 
 aws iam attach-role-policy \
 --policy-arn arn:aws:iam::268114937024:policy/Amazon_EBS_CSI_Driver \
---role-name eksctl-eksworkshop-eksctl-nodegro-NodeInstanceRole-OLRSMOULPG9M   <---- EC2 에 붙어있는 Role
+--role-name eksctl-eksworkshop-eksctl-nodegro-NodeInstanceRole-1C6Q7CI9GG2XT   <---- EC2 에 붙어있는 Role
 
 4. Amazon EBS CSI 드라이버를 배포하려면 다음 명령을 실행합니다.
 kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
@@ -165,7 +165,7 @@ kubectl exec -it app cat /data/out.txt
 ## https://www.stacksimplify.com/aws-eks/kubernetes-storage/create-kubernetes-storageclass-persistentvolumeclain-configmap-for-mysql-database/
 
 #01-storage-class.yml
-#skip
+kubectl -f ./01-storage-class.yml
 
 #02-persistent-volume-claim.yml
 kubectl -f ./02-persistent-volume-claim.yml

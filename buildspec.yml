@@ -1,6 +1,15 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      docker: 18
+    commands:
+      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.12/2020-07-08/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mv ./kubectl /usr/local/bin/kubectl
+      - mkdir ~/.kube
+      - aws eks --region ap-northeast-2 update-kubeconfig --name cloud-l3-eks
   build:
     commands:
       - echo Build Starting on `date`
@@ -19,6 +28,13 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - AWS_ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - DATE=`date`
+      - echo Build completed on $DATE
+      - sed -i.bak 's#AWS_ECR_URI#'"$AWS_ECR_URI"'#' ./deployment.yaml
+      - sed -i.bak 's#DATE_STRING#'"$DATE"'#' ./deployment.yaml
+      - kubectl apply -f ./deployment.yaml
+      - kubectl apply -f ./service.yaml
 artifacts:
   files:
     - appspec.yml
@@ -30,3 +46,4 @@ artifacts:
 cache:
   paths:
     - '/root/.gradle/caches/**/*'
+

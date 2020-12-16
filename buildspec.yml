@@ -31,6 +31,7 @@ phases:
       - AWS_ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
       - DATE=`date`
       - ls -al
+      - kubectl get nodes
       - echo Build completed on $DATE
       - sed -i.bak 's#AWS_ECR_URI#'"$AWS_ECR_URI"'#' ./Deployment.yaml
       - sed -i.bak 's#DATE_STRING#'"$DATE"'#' ./Deployment.yaml

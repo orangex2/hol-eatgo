@@ -9,7 +9,7 @@ phases:
       - chmod +x ./kubectl
       - mv ./kubectl /usr/local/bin/kubectl
       - mkdir ~/.kube
-      - aws eks --region ap-northeast-2 update-kubeconfig --name eksworkshop-eksctl
+      - aws eks --region ap-northeast-2 update-kubeconfig --name eksworkshop-eksctl --role arn:aws:iam::268114937024:role/service-role/codebuild-hol-eatgo-builder-v2-service-role
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com      
       - echo Build started on `date`

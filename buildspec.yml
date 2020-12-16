@@ -34,7 +34,7 @@ phases:
       - sed -i.bak 's#AWS_ECR_URI#'"$AWS_ECR_URI"'#' ./Deployment.yaml
       - sed -i.bak 's#DATE_STRING#'"$DATE"'#' ./Deployment.yaml
       - kubectl apply -f ./Deployment.yaml
-      - kubectl apply -f ./Dervice.yaml
+      - kubectl apply -f ./Service.yaml
 artifacts:
   files:
     - appspec.yml

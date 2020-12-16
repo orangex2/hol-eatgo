@@ -9,7 +9,7 @@ phases:
       - chmod +x ./kubectl
       - mv ./kubectl /usr/local/bin/kubectl
       - mkdir ~/.kube
-      - aws eks --region ap-northeast-2 update-kubeconfig --name cloud-l3-eks
+      - aws eks --region ap-northeast-2 update-kubeconfig --name eksworkshop-eksctl
   build:
     commands:
       - echo Build Starting on `date`

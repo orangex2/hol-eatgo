@@ -10,15 +10,6 @@ phases:
       - mv ./kubectl /usr/local/bin/kubectl
       - mkdir ~/.kube
       - aws eks --region ap-northeast-2 update-kubeconfig --name eksworkshop-eksctl
-  build:
-    commands:
-      - echo Build Starting on `date`
-      - chmod +x ./gradlew
-      - ./gradlew build
-  post_build:
-    commands:
-      - echo $(basename ./build/libs/*.jar)
-      - pwd
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com      
       - echo Build started on `date`
@@ -34,7 +25,17 @@ phases:
       - sed -i.bak 's#AWS_ECR_URI#'"$AWS_ECR_URI"'#' ./Deployment.yaml
       - sed -i.bak 's#DATE_STRING#'"$DATE"'#' ./Deployment.yaml
       - kubectl apply -f ./Deployment.yaml
-      - kubectl apply -f ./Service.yaml
+      - kubectl apply -f ./Service.yaml      
+  build:
+    commands:
+      - echo Build Starting on `date`
+      - chmod +x ./gradlew
+      - ./gradlew build
+  post_build:
+    commands:
+      - echo $(basename ./build/libs/*.jar)
+      - pwd
+
 artifacts:
   files:
     - appspec.yml

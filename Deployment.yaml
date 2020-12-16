@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hol-eatgo-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hol-eatgo
+  template:
+    metadata:
+      labels:
+        app: hol-eatgo
+    spec:
+      containers:
+        - name: hol-eatgo
+          image: AWS_ECR_URI #buildspec.yml에서 ECR의 URI:TAG 로 치환함
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          env:
+            - name: DATE
+              value: 'DATE_STRING'

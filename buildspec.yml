@@ -9,7 +9,7 @@ phases:
       - chmod +x ./kubectl
       - mv ./kubectl /usr/local/bin/kubectl
       - mkdir ~/.kube
-      - aws eks --region ap-northeast-2 update-kubeconfig --name eksworkshop-eksctl  --role-arn arn:aws:iam::268114937024:role/service-role/codebuild-hol-eatgo-builder-v2-service-role
+      - aws eks --region ap-northeast-2 update-kubeconfig --name eksworkshop-eksctl
       - kubectl get nodes
   build:
     commands:

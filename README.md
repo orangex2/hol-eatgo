@@ -7,6 +7,6 @@
   ```
 AWS_DEFAULT_REGION: ap-northeast-2
 AWS_ACCOUNT_ID: <YOUR ACCOUNT ID>
-IMAGE_REPO_NAME: hol-eatgo
+IMAGE_REPO_NAME: <YOUR ECR Repository Name>
 IMAGE_TAG: latest
   ```

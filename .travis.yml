@@ -31,7 +31,8 @@ after_success:
  - aws configure set profile.default.aws_access_key_id $AWS_ACCESS_KEY
  - aws configure set profile.default.aws_secret_access_key $AWS_SECRET_KEY
  - aws configure list
- - eval $(aws ecr get-login --no-include-emaili --region us-east-1 ) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+# - eval $(aws ecr get-login --no-include-emaili --region us-east-1 ) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+ - eval $(aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/f0e6s2t0 ) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
  - docker build -t eatgo-api-test .
  - docker tag eatgo-api-test:latest public.ecr.aws/f0e6s2t0/eatgoimage:latest 
  - docker push public.ecr.aws/f0e6s2t0/eatgoimage:latest

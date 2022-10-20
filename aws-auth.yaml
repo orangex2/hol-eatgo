@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  mapRoles: |
+    - groups:
+      - system:bootstrappers
+      - system:masters
+      rolearn: arn:aws:iam::066175511719:role/codebuild-hol-eatgo-builder-service-role
+      username: codebuild-hol-eatgo-builder-service-role
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-10-20T02:26:27Z"
+  name: aws-auth
+  namespace: kube-system
+  resourceVersion: "1473"
+  uid: 69e5f937-f1c5-4b7c-b991-8061290b4809

@@ -10,4 +10,4 @@ spec:
   selector:
     app: hol-eatgo
   type: LoadBalancer
-#  type: ClusterIP
+

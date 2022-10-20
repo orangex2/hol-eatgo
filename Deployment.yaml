@@ -14,12 +14,12 @@ spec:
     spec:
       containers:
         - name: hol-eatgo
-          image: 066175511719.dkr.ecr.ap-northeast-2.amazonaws.com/eatgoimage:latest 
+          image: AWS_ECR_URI 
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
           env:
             - name: DATE
-              value: '0120'
+              value: 'DATE_STRING'
 
 
